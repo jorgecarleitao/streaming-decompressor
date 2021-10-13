@@ -3,21 +3,24 @@ This crate contains a [`FallibleStreamingIterator`] optimized for decompressions
 A typical problem that libraries working with compressed formats face is that they need to preserve
 an intermediary buffer to decompress multiple items. Specifically, implementations that use
 
-```
+```rust
 fn decompress(compressed: Vec<u8>) -> Vec<u8> {
     unimplemented!("Decompress")
 }
 ```
-are ineficient because they will need to allocate a new `Vec<u8>` for every decompression, and this
-allocation scales with the average size the items.
 
-The typical solution to this problem is to offer
-```
+are ineficient because they will need to allocate a new `Vec<u8>` for every decompression, and this
+allocation scales with the average _decompressed_ size the items.
+
+The typical solution for this problem is to offer
+
+```rust
 fn decompress(compressed: Vec<u8>, decompressed: &mut Vec<u8>) {
     decompressed.clear();
     unimplemented!("Decompress into `decompressed`, maybe re-allocing it.")
 }
 ```
+
 Such API avoids one allocation per item, but requires the user to deal with preserving `decompressed`
 between iterations. Such pattern is not possible to achieve with [`Iterator`] API atm.
 
@@ -25,7 +28,8 @@ This crate offers [`Decompressor`], a [`FallibleStreamingIterator`] that consume
 that yields uncompressed items, maintaining an internal [`Vec<u8>`] that is automatically re-used across items.
 
 # Example
-```
+
+```rust
 use streaming_codec::{Decompressor, Compressed, Decompressed, FallibleStreamingIterator};
 
 // An item that is decompressable
