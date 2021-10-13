@@ -1,0 +1,8 @@
+[package]
+name = "streaming-codec"
+version = "0.1.0"
+edition = "2018"
+author = ["Jorge C. Leitao"]
+
+[dependencies]
+fallible-streaming-iterator = "0.1"
