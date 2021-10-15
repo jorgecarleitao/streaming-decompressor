@@ -1,5 +1,5 @@
 [package]
-name = "streaming-codec"
+name = "streaming-decompression"
 version = "0.1.0"
 edition = "2018"
 author = ["Jorge C. Leitao"]
