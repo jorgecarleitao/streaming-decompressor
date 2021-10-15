@@ -1,5 +1,6 @@
 #![doc = include_str!("lib.md")]
 
+pub use fallible_streaming_iterator;
 pub use fallible_streaming_iterator::FallibleStreamingIterator;
 
 /// Trait denoting a compressed item. Use `is_compressed` to declare if the item is
