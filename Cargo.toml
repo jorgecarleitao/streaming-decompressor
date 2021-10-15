@@ -2,6 +2,8 @@
 name = "streaming-decompression"
 version = "0.1.0"
 edition = "2018"
+description = "Fallible streaming iterator specialized for compression and decompression"
+license = "Apache-2.0"
 author = ["Jorge C. Leitao"]
 
 [dependencies]
