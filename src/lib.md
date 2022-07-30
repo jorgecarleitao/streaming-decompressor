@@ -30,7 +30,7 @@ that yields uncompressed items, maintaining an internal [`Vec<u8>`] that is auto
 # Example
 
 ```rust
-use streaming_codec::{Decompressor, Compressed, Decompressed, FallibleStreamingIterator};
+use streaming_decompression::{Decompressor, Compressed, Decompressed, FallibleStreamingIterator};
 
 // An item that is decompressable
 #[derive(Debug, PartialEq)]
@@ -66,7 +66,7 @@ fn decompress(
     if i.is_compressed() {
         // the actual decompression, here identity, but more complex stuff can happen.
         buffer.clear();
-        buffer.extend(&mut i.data.iter().rev());
+        buffer.extend(&mut i.data.iter());
     } else {
         std::mem::swap(&mut i.data, buffer);
     };
@@ -93,19 +93,19 @@ fn main() -> Result<(), std::convert::Infallible> {
 
    let item = decompressor.next()?.unwrap();
    // the item was decompressed
-   assert_eq!(item.data, vec![3, 2, 1]);
+   assert_eq!(item.data, vec![1, 2, 3]);
    assert_eq!(item.metadata, "is_compressed".to_string());
 
    let item = decompressor.next()?.unwrap();
    // the item was decompressed
-   assert_eq!(item.data, vec![6, 5, 4]);
+   assert_eq!(item.data, vec![4, 5, 6]);
    assert_eq!(item.metadata, "is_compressed".to_string());
 
    assert_eq!(decompressor.next()?, None);
 
    // we can re-use the internal buffer if we wish to
    let internal = decompressor.into_inner();
-   assert_eq!(internal, vec![6, 5, 4]);
+   assert!(internal.capacity() > 0);
    Ok(())
 }
 ```

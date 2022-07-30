@@ -1,3 +1,4 @@
+#![forbid(unsafe_code)]
 #![doc = include_str!("lib.md")]
 
 pub use fallible_streaming_iterator;
@@ -58,7 +59,8 @@ where
 
     /// Returns its internal buffer, consuming itself.
     #[inline]
-    pub fn into_inner(self) -> Vec<u8> {
+    pub fn into_inner(mut self) -> Vec<u8> {
+        self.buffer.clear(); // not leak information
         self.buffer
     }
 }
@@ -141,7 +143,7 @@ mod tests {
         if i.is_compressed() {
             // the actual decompression, more complex stuff can happen.
             buffer.clear();
-            buffer.extend(&mut i.data.iter().rev());
+            buffer.extend(&mut i.data.iter());
         } else {
             std::mem::swap(&mut i.data, buffer);
         };
@@ -163,12 +165,12 @@ mod tests {
         let mut decompressor = Decompressor::new(iter, buffer, decompress);
 
         let item = decompressor.next().unwrap().unwrap();
-        assert_eq!(item.data, vec![3, 2, 1]);
+        assert_eq!(item.data, vec![1, 2, 3]);
         assert_eq!(item.metadata, "not_compressed".to_string());
         assert_eq!(decompressor.next().unwrap(), None);
 
         // i.e. the internal buffer was not used.
-        assert_eq!(decompressor.into_inner(), vec![]);
+        assert_eq!(decompressor.into_inner().capacity(), 0);
     }
 
     #[test]
@@ -183,12 +185,12 @@ mod tests {
         let mut decompressor = Decompressor::new(iter, buffer, decompress);
 
         let item = decompressor.next().unwrap().unwrap();
-        assert_eq!(item.data, vec![3, 2, 1]);
+        assert_eq!(item.data, vec![1, 2, 3]);
         assert_eq!(item.metadata, "is_compressed".to_string());
         assert_eq!(decompressor.next().unwrap(), None);
 
         // i.e. after the last `next`, the last item is consumed and the internal buffer
         // contains its data
-        assert_eq!(decompressor.into_inner(), vec![3, 2, 1]);
+        assert!(decompressor.into_inner().capacity() > 0);
     }
 }
