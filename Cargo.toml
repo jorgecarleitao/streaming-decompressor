@@ -1,11 +1,11 @@
 [package]
 name = "streaming-decompression"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2018"
-description = "Fallible streaming iterator specialized for compression and decompression"
+description = "Fallible streaming iterator specialized for decompression"
 license = "Apache-2.0"
-homepage = "https://github.com/jorgecarleitao/arrow2"
-repository = "https://github.com/jorgecarleitao/arrow2"
+homepage = "https://github.com/jorgecarleitao/streaming-decompressor"
+repository = "https://github.com/jorgecarleitao/streaming-decompressor"
 author = ["Jorge C. Leitao <jorgecarleitao@gmail.com>"]
 
 [dependencies]
